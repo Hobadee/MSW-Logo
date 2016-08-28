@@ -1,0 +1,3 @@
+#include "ctl3d.h"
+
+CTL3D_3DCHECK BITMAP "3dcheck.bmp"

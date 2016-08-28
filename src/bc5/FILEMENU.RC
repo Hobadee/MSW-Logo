@@ -1,0 +1,44 @@
+// ObjectWindows - (C) Copyright 1992 by Borland International
+
+FILECOMMANDS  MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+BEGIN
+  POPUP "&File"
+  BEGIN
+//    MenuItem  "&New", CM_FILENEW
+//    MenuItem  "&Open...", CM_FILEOPEN
+//    MenuItem  "&Save", CM_FILESAVE
+    MenuItem  "&Save and Exit", CM_FILESAVEANDEXIT
+    MenuItem  "Save to &Workspace", CM_FILESAVETOWORKSPACE
+//    MenuItem  "Save &As...", CM_FILESAVEAS
+    MenuItem  "&Print...", CM_FILEPRINT
+    MenuItem  SEPARATOR
+    MenuItem  "E&xit", CM_EXIT
+  END
+  POPUP "&Edit"
+  BEGIN
+    MenuItem  "&Undo\aAlt+BkSp", CM_EDITUNDO
+    MenuItem  SEPARATOR
+    MenuItem  "&Cut\aShift+Del", CM_EDITCUT
+    MenuItem  "C&opy\aCtrl+Ins", CM_EDITCOPY
+    MenuItem  "&Paste\aShift+Ins", CM_EDITPASTE
+    MenuItem  "&Delete\aDel", CM_EDITDELETE
+    MenuItem  "C&lear All\aCtrl+Del", CM_EDITCLEAR
+  END
+  POPUP "&Search"
+  BEGIN
+    MenuItem  "&Find...", CM_EDITFIND
+    MenuItem  "&Replace...", CM_EDITREPLACE
+    MenuItem  "&Next\aF3", CM_EDITFINDNEXT
+  END
+  POPUP "Se&t"
+  BEGIN
+    MenuItem  "&Font...", CM_EDITSETFONT
+  END
+  MenuItem  "Test!",  CM_TEST
+  POPUP "&Help"
+  BEGIN
+    Menuitem  "&Index",                         CM_HELP
+    MenuItem  "&Editor",         		CM_HELPEDIT
+    MenuItem  "&Topic Search\aF1",         	CM_HELPEDIT_TOPIC
+  END
+END

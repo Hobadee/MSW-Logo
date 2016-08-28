@@ -1,0 +1,9 @@
+Edit MSWLogo.txt
+Edit Examples.txt
+Fresh Get from VSS
+Use WinZip to make MSWSourceXX.zip
+Build Logo32.EXE with Logo32.IDE BC 5.02
+Build Help by opening Logo.DOC in Word 2000 and SaveAs Logo.RTF
+Run Help Compiler on Logo.HPJ
+Run InstallShield 6.22
+Upload MSWSourceXX.Zip, MSWLogoXX.exe, MSWLogoXX.txt

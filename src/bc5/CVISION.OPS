@@ -1,0 +1,276 @@
+; cvision.ops: Desired spacing before and after C operators
+;
+; The entries in this file are lines of the form
+;
+;     "xxx",to_left,to_right
+;
+; where
+;     "xxx" is the operator, left-justified in a three-space field
+;     to_left is desired number of spaces to the left
+;     to_right is the desired number of spaces to the right
+;
+; An entry of -1 indicates that spacing on that side is not to be adjusted.
+;
+; The default values give an attractive spacing style, and we suggest that
+; you try them first before making any changes. As you make changes, note
+; that interesting interactions can occur, especially when multiple
+; operators occur in sequence. See the section on "Operators followed by
+; operators" for a discussion of how to handle this problem.
+;
+; The entries are more or less in order of C/C++ operator precedence.
+; They may be re-ordered in any fashion that you find useful.
+; If an operator is omitted, its settings are assumed to be -1, -1.
+;
+; The operators given here are not strictly limited to those defined in
+; standard C/C++. For example, we recently encountered a variant C tongue
+; in which the operators ({ and }) had been defined as a type of array
+; constructor. Adding these to the list of operators allowed that type
+; of C to be reformatted very nicely!
+;
+;                        ====================
+;                         Special case rules
+;                        ====================
+;
+; <<< General>>>
+;   1) All code letters used below (e.g., the trailing "u" discussed in
+;      the next section) are CASE-SPECIFIC and are error-checked. Use of
+;      an invalid code letter produces error U43.
+;
+; <<< Operators with muliple uses >>>
+;   1) Unary operators (+a) are distinguished from their binary
+;      twins (a + b) by a trailing "u". Multiple identical unary
+;      operators without intervening spaces (***x) are treated as
+;      a single operator for purposes of spacing adjustment.
+;
+;   2) The colon following a label (label:) or case/default is marked
+;      with a trailing "l" to distinguish it from the colon in the
+;      ternary operator (?:).
+;
+;   3) In a declaration, the * and & used to declare pointers/references
+;      are distinguished from other uses of * and & by a trailing "d".
+;      As with unary operators, multiple "*" operators without
+;      intervening spaces are treated as a single operator (char **s).
+;      For this feature to work, C-Format must be able to recognize the
+;      keyword as a keyword. Since C-Format does not scan #include
+;      files, it will NOT recognize such common idioms as FILE *f; as
+;      a declaration. If you make use of such code, then you should tell
+;      C-Format about these keywords with +rw(keyword). You could
+;      put these keywords in an .how file ENVIRON block that you use
+;      with C-Format (using the KEYWORD command), or put them in the
+;      CFORMAT environment variable.
+;
+;   4) Usages in declarations of single character operators such
+;      as ] and = may be distinguished from standard usages by a
+;      trailing D. Your need to distinguish these will depend on your
+;      coding style. Note that [] is defined as an operator: the only
+;      time this is legal C is "char a[]" or (C++) "delete[] a". This
+;      rule also applies to the ~ in the declaration of a destructor.
+;
+;   5) There are four types of parentheses that are distinguished by
+;      adding various trailing characters to the ( and ) entries:
+:           if (x)      ; after a keyword    -- add a 'k'
+;           func( x )   ; after a call       -- add a 'c'
+;           a + (b - c) ; in an expression   -- add nothing
+;           ((a))       ; two or more parens -- add a 'p' (see below)
+;
+;      See "Operators followed by operators" for more on spacing
+;      between and around parentheses and a discussion of the (( and ))
+;      operators.
+;
+;   6) There are three ways that < and > get used, one of which is
+;      distinguished by adding a trailing character:
+;           #include <file>    ; see below           -- never reformatted
+;           template <class T> ; part of a template  -- add a 't'
+;           a < b              ; comparison operator -- add nothing
+;
+; <<< Operators followed by operators >>>
+;   1) If two operators occur in sequence, the right spacing rule
+;      of the first is applied followed by the left spacing rule of
+;      the second operator. This means that the second operator
+;      has final control over the spacing between the two operators.
+;
+;   2) First exception to rule 1: if the first operator is
+;
+;           a) a left parenthesis, or
+;           b) either of the implicity unary operators ~ and !, or
+;           c) any of the explicity unary operators +-*& (i.e., marked
+;               with a "u", as detailed above),
+;
+;      then the first operator controls the spacing between the first
+;      and second operators. In effect, these unary operators have a
+;      higher precedence than other operators.
+;
+;   3) Second exception to rule 1: when two identical parens occur
+;      in sequence, as in (( or )), the spacing between the two can be
+;      overridden and set to a specific value by defining the operator
+;      "(p " or ")p ". The to_left value for this operator will be used
+;      to control spacing between the parens. The to_right value is
+;      ignored.
+;
+;   4) Third exception to rule 1: Sequences of unary operators (***x)
+;      are treated as a single operator, as per various notes above.
+;
+; <<< Miscellaneous >>>
+;   1) Spacing around operators inside block initializers such as
+;      int a[] = { 1, 2, 3 }; is NEVER adjusted. This is necessary
+;      so that multi-line layouts are not disrupted.
+;
+;   2) Spacing around operators in #include, #define, & #pragma commands
+;      is not adjusted. Note that spacing around the leading # can be
+;      adjusted with -l#xx,yy or NESTED_PREP_STEP=xx,yy commands.
+;
+;   3) If the first line of a function intro or a declaration gets
+;      adjusted, all associated lines are shifted to match. This causes
+;      code like
+;                      int*func(int*n,
+;                               int *y)  // needs to follow along!
+;                      { // etc.
+;
+;      to end up as
+;                      int *func ( int *n,
+;                                  int *y )  // needs to follow along!
+;                      { // etc.
+;
+;
+; If all else fails, and C-Format misbehaves on some section of code,
+; remember that you can turn this feature off with -lop- (command line)
+; or ADJUST_OPERATOR_SPACING = NO (.how file). You can also protect
+; individual blocks of code by use of
+;
+;   #pragma cvision_cformat = off // stop re-formatting
+;     // protected code
+;   #pragma cvision_cformat = on  // start re-formatting again
+;
+
+; Some special ones
+";  ", 0, 1 ; semi-colon
+":l ", 0, 1 ; This is the : following label/case/default (as opposed to ?:)
+"...", 1, 0 ; int func(int x, ...)
+
+; Curly braces
+"{  ", 1, 1
+"}  ", 1, 1
+
+; These are for C++
+":: ", 0, 0 ; ::func(); C::x;
+"<t ", 0, 0 ; template<class T>
+">t ", 0, 1 ; template<class T>. Note that X<Y<int> > will not be
+            ;   collapsed to X<Y<int>> under any circumstance. Some
+            ;   compilers may recognize the >> as right-shift!
+".* ", 1, 1
+"->*", 1, 1
+
+; Now for the general ones
+"() ", 0, 1 ; a()
+"(k ", 1, 0 ; following a keyword: if (expression)
+")k ", 0, 1 ;   .. the matching right paren
+"(c ", 0, 0 ; following a call or macro invocation: func( thing )
+")c ", 0, 0 ;   .. the matching right paren
+"(  ", 1, 0 ; in expressions: 1 + ( 2 + 3 )
+")  ", 0, 1 ;   .. the matching right paren
+
+; These two are optional. Note that using these can lead to effects that
+; not everyone likes, since this can override (for example) the ")c"
+; setting. Thus, you could get "x( y( z))" by defining "))" to 0, but get
+; "x( y( z) )" by not defining it (or by defining it to be 1).
+"(p ", 0, -1; spacing between ((. Only the to_left value is used.
+")p ", 0, -1; spacing between )). Only the to_left value is used.
+
+
+"[] ",-1,-1 ; char a[] = "abc";
+"[  ", 0, 0 ; f[ x ]
+
+"]  ", 0, 1
+"]D ", 0, 0 ; char a[ 4 ] = "abc";
+            ; see note at =D before changing.
+
+".  ", 0, 0 ; a . b
+"-> ", 0, 0 ; a -> b
+
+"++ ", -1, -1 ; a++ and ++a
+"-- ", -1, -1 ; a-- and --a
+              ; with these two, C-Format will not convert code such
+              ; as "a++ + ++b" to "a+++++b" no matter what settings
+              ; are specified.
+
+;Microsoft C uses this one
+":> ", 1, 1 ; a :> b
+
+"!  ", 1, 0 ; !a
+"~  ", 1, 0 ; ~a
+"~D ", 0, 0 ; a::~a()
+"-  ", 1, 1 ;  a - b
+"-u ", 1, 0 ; -a
+"+  ", 1, 1 ;  a + b
+"+u ", 1, 0 ; +a
+
+"&  ", 1, 1 ;  a & b
+"&u ", 1, 0 ; &a
+"&d ", 1, 0 ; char &s -- see discussion at *d, below
+"*  ", 1, 1 ;  a * b
+"*u ", 1, 0 ; *a, **a, ***a, etc.
+"*d ", 1, 0 ; char *s
+            ; The default settings for *d and &d produce "int *s;" and
+            ; "int &s;". Note that the common C++ usage of "int& s;" is
+            ; conceptually flawed as it appears to the novice that
+            ; "int& s, t;" should assign type "int&" to both s and t. It
+            ; doesn't, of course, and thus you should carefully consider
+            ; whether the "int& s;" usage makes sense in your own code.
+
+; "*" already done
+"/  ", 1, 1
+"%  ", 1, 1
+
+; "+" already done
+; "-" already done
+
+"<< ", 1, 1
+">> ", 1, 1
+
+"<  ", 1, 1
+"<= ", 1, 1
+">  ", 1, 1
+">= ", 1, 1
+
+"== ", 1, 1
+"!= ", 1, 1
+
+; "&" already done
+
+"^  ", 1, 1
+
+"|  ", 1, 1
+
+"&& ", 1, 1
+
+"|| ", 1, 1
+
+"?  ", 1, 1 ; a ? b : c ;
+":  ", 1, 1 ; this is the colon for "?:" and "class X : public Y"
+            ; -- see above for label:
+
+"=  ", 1, 1 ; a = b;
+"=D ",-1,-1 ; int a = 4; -- change with caution!
+            ; spacing around this equal is not adjusted so that things like
+            ;    int a =    123;
+            ;    int abc =  123;
+            ;    int abcd = 123;
+            ; are left alone
+"*= ", 1, 1
+"/= ", 1, 1
+"%= ", 1, 1
+"+= ", 1, 1
+"-= ", 1, 1
+"<<=", 1, 1
+">>=", 1, 1
+"&= ", 1, 1
+"^= ", 1, 1
+"|= ", 1, 1
+
+",  ", 0, 1
+
+;Pre-processor - these are required for C-Format's internal tables
+"#  ",-1,-1
+"## ",-1,-1
+"#@ ",-1,-1
+
