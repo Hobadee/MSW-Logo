@@ -1,0 +1,201 @@
+Put TPrint back due to HP Print Setup Options causing GPF
+on 32bit.
+
+8/19/97
+Fix Lost Edits after certain errors.
+Test distance on 16bit.
+Fixed ellipsearc
+make front/back clips relative to Eye.
+Cache vectors?
+Document new functions
+Test help on plane Win 3.11
+
+5/8/97
+
+Removed TPrint and TFixEdit back to normal Borland versions.
+
+Double Check REPCOUNT
+Do Tutorial TICTACTOE
+Add note about \\ in callbacks.
+Pause should save repcount?
+Repcount should know when it's not valid.
+Activearea does not validate arguments.
+error codes out of sync with doc's
+Should not allow save over old file.
+Finish Brians lambda addition.
+DIR should return a list
+Add warnings to INPORT/OUTPORT
+
+No Dead Code Elimination on WIN32 (Causes No Dialog drawn)
+No Global Register Allocation on WIN32 (Causes Demo to fail))
+No Out of Line Inline on Dynamic link WIN32 (causes links to fail)
+No Word WIN16 or Long WIN32 Align (Causes Replace in Edit to Fail)
+No Jump Optimizations on WIN16 (causes turtle wrap to gpf) *
+
+With 4.5:
+
+No Out of Line Inline on Dynamic link WIN32 (causes links to fail)
+No Word WIN16 or Long WIN32 Align (Causes Replace in Edit to Fail)
+Dead Code Elimination on WIN32 (Causes turtle wrap to gpf)
+Jump Optimizations on WIN16 (causes turtle wrap to gpf) *
+No Loop Optimization on WIN16 (causes screw up in initing char strings in lgetfocus)
+
+Hello.  I recently picked up a copy of MswLogo and have been trying
+it out.  I think you've produced a fine implementation and I compliment
+you on the package.  I'm a computing professional myself and am interested
+in using Logo for casual development and to teach my kids a little about
+programming.  After starting to find my way around, I've run across a
+few bugs (mostly in the help documentation) and have a few questions.
+
+Questions:
+
+ - I'm unclear about the assumptions and constraints on callback code.
+   It appears that some variables are inaccessible and other normal
+   functions are unavailable as well.  Is this described somewhere?
+
+ - Related to above: what is the execution mode of the mouse handler?
+   Mouseon appears to run as a separate task.  How can I do "modal" or
+   sequential mouse processing, e.g., start up mouseon and wait for an
+   event before continuing.  Catch and throw don't seem to work across
+   the callback interface.
+
+ - The coordinate scale used by windowcreate and related procedures seems
+   to be different from Logo screen coordinates by a factor of two.  Is
+   this right?  Also, is there a way to hide a window without deleting it?
+
+Problems:
+
+ - Doing SHOW GETFOCUS caused a general protection fault at 0011:107D.
+
+ - In creating listboxes, when I do a listboxaddstring using a word with
+   embedded blanks, and then later invoke listboxgetselect, it returns a
+   list of words as if the original string had gone through PARSE.  This
+   may be necessary, but it seems like the selected object ought to match
+   what I originally submitted.
+
+ - The demo is very nice, but I think it has two small problems: the audio
+   is too loud and the questionboxes after each segment quickly obscure what
+   was just displayed.
+
+The following are all minor problems with the help documentation.
+
+THESE ARE DONE
+
+ - Examples wrong for "remainder": 6/4 and 6/2.
+
+ - In entry for TEXT, no output shown for line: abc "Hello "Bye.  Same for
+   FULLTEXT.  Also, last line of FULLTEXT not in bold.
+
+ - In entry for BURY, one of the intended links appears to be misnamed:
+   VARIABLES should be NAMES.
+
+ - The SETFOCUS entry points to itself.  It should read "See also GETFOCUS".
+
+ - The text in the LISTBOXCREATE entry implies that the parent needs to be
+   a dialog window, but I think regular "modeless" windows are OK here.
+
+ - In the YIELD BUTTON entry, the first sentence seems to say the negation
+   of what you intend about yielding.
+
+ - In entry "Modal vs. Modeless Windows", there are problems with the last
+   sentence.  What is the "following"?  How is READLIST a window?  Also,
+   previous paragraph has some typos.
+
+As I continue trying out the package, I'll probably run across other things
+and I'll be happy to send them along if you find this helpful.  Thanks for
+putting out a nice Logo.
+
+Dont likes
+----------
+ LOGO general
+- missing standard controll-structures repeat..until and case
+
+  Did you see DO.WHILE and DO.UNTIL?
+
+- no type-checking by the system
+
+  It does have some, some are broken and some are missing.
+
+- sometimes strange syntx (at least for me)
+  Ex: normaly "Name means name of a variable, :name contents of variable
+      but for function calls you have to write
+         myfunction :var1 :var1
+      where you mean then name var1.. and not the contents
+
+      most systems use something like pradicatename(var1,var2..)
+      but LOGO writes (PRName var1 var2 ...) fading away the difference
+      between the predicatename and the vars in the inputlist
+
+  I'm no Lisp/Logo guru but when you really get deep into the
+  language these rules become critical. Like code that builds
+  code and passes it as arguments etc. Very powerful.
+  Talk to Brian Harvey.
+
+- Ease of use for cryptic abbrevation (confortable at first, but...)
+- see whish list
+
+Wishes
+---------
+- full controll for the "sliders" (read position, set to fixed pos. ...)
+
+  I never thought of adding a read to the scroller of the main window.
+  But I have thought of offering absolute settings.
+
+- controll for the command-windwo size, hide command-window
+
+  You can almost do anything (except you cannot pass or return structs)
+
+  to resizemain
+  dllload "user.exe
+  make "hwnd dllcall [w FindWindow l 0 s [MswLogo Screen]]
+  make "status dllcall (list "w "MoveWindow "w :hwnd "w "0 "w "0 "w "100 "w
+  "100 "w "1)
+  dllfree
+  end
+
+  Cool eh?
+
+- set font possibility for the command-window (-> mono-spaced fonts)
+
+  Valid request.
+
+- supplement a list of spec. charcters and their meaning (parenthis, Tilde...)
+  to the documentation
+
+  Good Idea
+
+- full controll for the keyboard (cursor-keys usw...)
+
+  Maybe.
+
+- more sophistcate examples in the help-system
+
+  I intentionally kept the samples in the help as short as possible
+  to get the point across about the command in question. For more
+  complex examples see \logo\examples\...
+
+Errors?
+---------
+- Using Autostart as described in the manual p.12 leads to a hanging-System
+  (Windows egg-timer does not disappear)
+
+  I managed to get the hangs you described. It does not behave well
+  if there is a syntax error (bug). Make sure you have a space after the
+  -l and use single "\"'s in your path.
+
+  I tested this by setting properties on an Icon.
+  And by lauching it from a DOS Window in Win95.
+
+  c:\logo\logo.exe -l c:\logo\junk.lg
+
+  Also see help "startup to get a function to execute after it's
+  loaded.
+
+- unespected changing of turtel color when multiturtel are used
+- hite turtel sometimes does not work when multiturtel are used
+- the system does not remember the work-file name when startet
+  with -l worfilename  option (first save switches to save as)
+
+  I have seen a couple glitches here and there too and seems dependent
+  on video cards/drivers used. I'll look into it.
+

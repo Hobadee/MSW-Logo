@@ -1,0 +1,47 @@
+// Please note -- this is a representative set of error suppression
+//                options.  Please adjust to suit your own policies
+//                See PC-lint for C/C++ manual (chapter LIVING WITH LINT)
+//                for further details.
+
+-vi
+
+-ic:\bc5\include
+-ic:\lint
+
+c:\lint\co-bc5.lnt
+c:\lint\lib-owl5 
+
+//-dSERVICES_OLE2INC_H
+-u__CONSOLE__           // a console application under 32-bit Windows-d__FLAT__
+-d__FLAT__
+-dSTRICT
+-d_OWLPCH
+-dCTL3D
+
+-e720                   // allow direct test of assignment
+-e502 -e713 -e737 -eau  // don't report on signed/unsigned mismatches
+-e734                   // allow sub-integer loss of information
+-e701 -e703             // shifting int left is OK
+-e765                   // Could be static is OK
+-e659                   // Nothing after } OK
+-e534                   // Return value not used OK
+-e578                   // Local hiding global OK
+-e527                   // Unreachable code OK (actually it's wrong)
+
+// These really should be fixed but for now turn them of
+
+-e64                    // Type mismatch OK
+-e647                   // suspicious trunation OK
+-e524                   // loss of precision OK
+-e571                   // Suspicious cast OK
+-e1512                  // Destructor not virtual OK
+
+-zero
++fcu
+-strong()
+-dDOS=0
+-dLINT=1
+-w2                     // 1st pass 
+
+//-e718                   // allow calls to undeclared C functions
+//-e746                   // allow calls w/o prototypes in C.
