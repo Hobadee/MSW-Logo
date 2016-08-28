@@ -1,0 +1,286 @@
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            
+//  File Name:	Setup.rul                                                   
+//                                                                            
+//  Description:	InstallShield script                                        
+//                                                                            
+//  Comments:	This script was generated based on the selections you made in
+//           	the Project Wizard.  Refer to the help topic entitled "Modify      
+//           	the script that the Project Wizard generates" for information
+//				on possible next steps.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
+// Include header files
+    
+#include "ifx.h"
+    
+////////////////////// string defines ////////////////////////////
+
+//////////////////// installation declarations ///////////////////
+
+// ----- DLL function prototypes -----
+
+
+    // your DLL function prototypes
+
+
+// ---- script function prototypes -----
+
+
+    // your script function prototypes
+
+    prototype CreateRegDBEntries();
+
+    // your global variables
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                                                                           
+//  FUNCTION:   OnFirstUIBefore                                            
+//                                                                           
+//  EVENT:      FirstUIBefore event is sent when installation is run for the first
+//              time on given machine. In the handler installation usually displays
+//              UI allowing end user to specify installation parameters. After this
+//              function returns, ComponentTransferData is called to perform file
+//              transfer.
+//                                                                           
+///////////////////////////////////////////////////////////////////////////////
+function OnFirstUIBefore()
+    number  nResult,nSetupType;
+    string  szTitle, szMsg;
+    string  szDir;
+    string  szfolder;
+    LIST    listStartCopy;
+begin	
+    // TO DO: if you want to enable background, window title, and caption bar title                                                                     
+    // SetTitle( @TITLE_MAIN, 24, WHITE );                                        
+    // SetTitle( @TITLE_CAPTIONBAR, 0, BACKGROUNDCAPTION ); 	                   
+    // Enable( FULLWINDOWMODE );						   
+    // Enable( BACKGROUND );							  
+    // SetColor(BACKGROUND,RGB (0, 128, 128));					   
+   
+    TARGETDIR = PROGRAMFILES ^@COMPANY_NAME ^@PRODUCT_NAME;	
+    szDir = TARGETDIR;
+    SHELL_OBJECT_FOLDER = @FOLDER_NAME;
+
+Dlg_Start:
+    // beginning of dialogs label
+
+Dlg_SdWelcome:
+    szTitle = "";
+    szMsg   = "";
+    nResult = SdWelcome( szTitle, szMsg );
+    if (nResult = BACK) goto Dlg_Start;
+
+Dlg_SdAskDestPath:
+    szTitle = "";
+    szMsg   = "";
+    nResult = SdAskDestPath( szTitle, szMsg, szDir, 0 );
+    TARGETDIR = szDir;
+    if (nResult = BACK) goto Dlg_SdWelcome;
+
+Dlg_ObjDialogs:
+    nResult = ShowObjWizardPages(nResult);
+    if (nResult = BACK) goto Dlg_SdAskDestPath;
+    
+Dlg_SdSelectFolder:
+    szfolder = SHELL_OBJECT_FOLDER; 
+    szTitle    = "";
+    szMsg      = "";
+    nResult    = SdSelectFolder( szTitle, szMsg, szfolder );
+    SHELL_OBJECT_FOLDER = szfolder;
+    if (nResult = BACK) goto Dlg_ObjDialogs;
+  
+/*
+Dlg_SdStartCopy:
+    szTitle = "";
+    szMsg   = "";
+    listStartCopy = ListCreate( STRINGLIST );
+    //The following is an example of how to add a string(szName) to a list(listStartCopy).
+    //eg. ListAddString(listStartCopy,szName,AFTER);
+    nResult = SdStartCopy( szTitle, szMsg, listStartCopy );	
+    ListDestroy(listStartCopy);
+    if (nResult = BACK) goto Dlg_SdSelectFolder;
+*/
+    // setup default status
+    SetStatusWindow(0, "");
+    Enable(STATUSEX);
+    StatusUpdate(ON, 100);
+
+    return 0;
+end;
+
+//////////////////////////////////////////////////////////////////////////////
+//                                                                           
+//  FUNCTION:   OnFirstUIAfter                                            
+//                                                                           
+//  EVENT:      FirstUIBefore event is sent when installation is run for the first
+//              time on given machine. In the handler installation usually displays
+//              UI allowing end user to specify installation parameters. After this
+//              function returns, ComponentTransferData is called to perform file
+//              transfer.
+//                                                                           
+///////////////////////////////////////////////////////////////////////////////
+function OnFirstUIAfter()
+    LIST    listStartCopy;
+begin	
+	CreateRegDBEntries();
+
+    return 0;
+end;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  FUNCTION:   OnMoving
+//
+//  EVENT:      Moving event is sent when file transfer is started as a result of
+//              ComponentTransferData call, before any file transfer operations 
+//              are performed.
+//
+///////////////////////////////////////////////////////////////////////////////
+function OnMoving()
+    string szAppPath;
+begin
+    // Set LOGO Compliance Application Path 
+    // TO DO : if your application .exe is in a subfolder of TARGETDIR then add subfolder 
+    szAppPath = TARGETDIR;
+    RegDBSetItem(REGDB_APPPATH, szAppPath);
+    RegDBSetItem(REGDB_APPPATH_DEFAULT, szAppPath ^ @PRODUCT_KEY);
+end;
+
+/*---------------------------------------------------------------------------*\
+ *
+ * Function:  CreateRegDBEntries
+ *
+ *  Purpose:  This function will create necessary keys and values for
+ *            the sample program.
+ *
+ *    Input:
+ *
+ *  Returns:
+ *
+ * Comments:
+\*---------------------------------------------------------------------------*/
+
+function CreateRegDBEntries()
+        string szKey[255], szValue;
+begin
+
+        RegDBSetDefaultRoot( HKEY_CLASSES_ROOT );
+
+        szKey = "\\.lgo";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, "Logo.File", -1 );
+
+        szKey = "\\Logo.File";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, "MSWLogo File", -1 );
+        RegDBSetKeyValueEx( szKey, "EditFlags",  REGDB_NUMBER, "0", -1 );
+
+        szKey = "\\Logo.File\\DefaultIcon";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, TARGETDIR ^ "Logo32.Exe,()", -1 );
+
+        szKey = "\\Logo.File\\Shell";
+        RegDBCreateKeyEx( szKey, "" );
+
+        szKey = "\\Logo.File\\Shell\\Load";
+        RegDBCreateKeyEx( szKey, "" );
+
+        szKey = "\\Logo.File\\Shell\\Load\\Command";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, TARGETDIR ^ "Logo32.Exe -l%1", -1 );
+
+        RegDBSetDefaultRoot( HKEY_LOCAL_MACHINE );
+
+        szKey = "\\SOFTWARE\\Classes\\.lgo";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, "Logo.File", -1 );
+
+        szKey = "\\SOFTWARE\\Classes\\Logo.File";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, "MSWLogo File", -1 );
+        RegDBSetKeyValueEx( szKey, "EditFlags",  REGDB_NUMBER, "0", -1 );
+
+        szKey = "\\SOFTWARE\\Classes\\Logo.File\\DefaultIcon";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, TARGETDIR ^ "Logo32.Exe,()", -1 );
+
+        szKey = "\\SOFTWARE\\Classes\\Logo.File\\Shell";
+        RegDBCreateKeyEx( szKey, "" );
+
+        szKey = "\\SOFTWARE\\Classes\\Logo.File\\Shell\\Load";
+        RegDBCreateKeyEx( szKey, "" );
+
+        szKey = "\\SOFTWARE\\Classes\\Logo.File\\Shell\\Load\\Command";
+        RegDBCreateKeyEx( szKey, "" );
+        RegDBSetKeyValueEx( szKey, "", REGDB_STRING, TARGETDIR ^ "Logo32.Exe -l%1", -1 );
+
+end;
+
+/*---------------------------------------------------------------------------*\
+ *
+ * Function:  OnFileReadOnly
+ *
+ *  Purpose:  This function tell InstallSHield to ignore readonly file errors
+ *
+ *    Input:
+ *
+ *  Returns:
+ *
+ * Comments:
+\*---------------------------------------------------------------------------*/
+
+function OnFileReadOnly(File)
+begin
+	return ERR_YES;
+end;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  FUNCTION:   OnMaintUIBefore
+//
+//  EVENT:      MaintUIBefore event is sent when end user runs installation that
+//              has already been installed on the machine. Usually this happens 
+//              through Add/Remove Programs applet. In the handler installation 
+//              usually displays UI allowing end user to modify existing installation
+//              or uninstall application. After this function returns, 
+//              ComponentTransferData is called to perform file transfer.
+//
+///////////////////////////////////////////////////////////////////////////////
+function OnMaintUIBefore()
+    string szResult,szCaption;
+    number nResult;
+begin
+	   // TO DO:   if you want to enable background, window title, and caption bar title   								
+	   // SetTitle( @TITLE_MAIN, 24, WHITE );					
+	   // SetTitle( @TITLE_CAPTIONBAR, 0, BACKGROUNDCAPTION );  
+	   // SetColor(BACKGROUND,RGB (0, 128, 128));					
+	   // Enable( FULLWINDOWMODE );						
+	   // Enable( BACKGROUND );							
+	
+    //Maintenance Mode
+    szResult = SdLoadString(IFX_MAINTUI_MSG);
+    szCaption = SdLoadString(IFX_ONMAINTUI_CAPTION);
+	   nResult = SprintfBox(MB_OKCANCEL,szCaption,"%s",szResult);
+	   if (nResult = IDCANCEL) then
+	       exit;
+	   elseif(nResult = IDOK) then
+	       // setup default status
+        SetStatusWindow(0, "");
+        Enable(STATUSEX);
+        StatusUpdate(ON, 100);
+
+	       //-->Remove all components
+	       ComponentRemoveAll();
+    endif;
+    return 0;
+end;
+
+// --- include script file section ---
+
+

@@ -1,0 +1,14 @@
+[General]
+Type=STRINGTABLESPECIFIC
+Version=1.00.000
+Language=0009
+
+[Data]
+TITLE_MAIN=Microsoft Windows Logo
+TITLE_CAPTIONBAR=Microsoft Windows Logo Setup
+COMPANY_NAME=Softronics
+PRODUCT_NAME=Microsoft Windows Logo
+PRODUCT_KEY=Logo.exe
+PRODUCT_VERSION=6.05.000
+FOLDER_NAME=Microsoft Windows Logo
+

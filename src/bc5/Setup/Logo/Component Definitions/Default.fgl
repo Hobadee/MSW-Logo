@@ -1,0 +1,60 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+SubDir0=<WINDIR>
+SubDir1=<PROGRAMFILES>
+SubDir2=<TARGETDIR>
+SubDir3=USERDEFINED
+SubDir4=<SUPPORTDIR>
+
+[<WINDIR>]
+fulldirectory=
+SubDir0=<WINDIR>\<WINSYSDIR>
+DISPLAYTEXT=Windows
+TYPE=TEXTSUBFIXED
+
+[<WINDIR>\<WINSYSDIR>]
+fulldirectory=
+DISPLAYTEXT=Windows System
+TYPE=TEXTSUBFIXED
+
+[<PROGRAMFILES>]
+fulldirectory=
+SubDir0=<PROGRAMFILES>\<COMMONFILES>
+DISPLAYTEXT=Program Files
+TYPE=TEXTSUBFIXED
+
+[<PROGRAMFILES>\<COMMONFILES>]
+fulldirectory=
+DISPLAYTEXT=Common Files
+TYPE=TEXTSUBFIXED
+
+[<TARGETDIR>]
+fulldirectory=
+SubDir0=<TARGETDIR>\Logolib
+SubDir1=<TARGETDIR>\Examples
+DISPLAYTEXT=Application Target Folder
+TYPE=TEXTSUBFIXED
+
+[<TARGETDIR>\Logolib]
+fulldirectory=
+DISPLAYTEXT=
+TYPE=FOLDER
+
+[<TARGETDIR>\Examples]
+fulldirectory=
+DISPLAYTEXT=
+TYPE=FOLDER
+
+[USERDEFINED]
+fulldirectory=
+DISPLAYTEXT=Script-defined Folders
+TYPE=USERSTART
+
+[<SUPPORTDIR>]
+fulldirectory=
+DISPLAYTEXT=Support Folder
+TYPE=TEXTSUBFIXED
+
